@@ -1,0 +1,10 @@
+name: online-shop-msa
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: online-shop
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-typescript
