@@ -35,6 +35,7 @@ public class UserServiceApplication {
 	@Bean
 	public CommandLineRunner loadData(UserRepository userRepository) {
 		return args -> {
+			userRepository.save(new User(null, "admin@admin.com", "password"));
 			userRepository.save(new User(null, "user1@example.com", "password1"));
 			userRepository.save(new User(null, "user2@example.com", "password2"));
 		};

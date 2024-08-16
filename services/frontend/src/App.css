@@ -1,0 +1,56 @@
+.App {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .App-header {
+    background-color: #282c34;
+    padding: 20px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .App-header h1 {
+    margin: 0;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info button {
+    margin-left: 10px;
+    background-color: #61dafb;
+    border: none;
+    color: #282c34;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .App-main {
+    display: flex;
+    margin-top: 20px;
+  }
+  
+  .App-sidebar {
+    width: 300px;
+    margin-left: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .App-main {
+      flex-direction: column;
+    }
+  
+    .App-sidebar {
+      width: 100%;
+      margin-left: 0;
+      margin-top: 20px;
+    }
+  }
