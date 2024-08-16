@@ -1,0 +1,407 @@
+src\main\java\com\example\product\OrderServiceApplication.java
+```
+package com.example.product;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@SpringBootApplication
+@EnableFeignClients
+public class OrderServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(OrderServiceApplication.class, args);
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+						.allowedOrigins("*")
+						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+						.allowedHeaders("*")
+						.allowCredentials(false);
+			}
+		};
+	}
+}
+```
+
+src\main\java\com\example\product\controller\OrderController.java
+```
+package com.example.product.controller;
+
+import com.example.product.dto.OrderRequest;
+import com.example.product.dto.OrderResponse;
+import com.example.product.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/orders")
+public class OrderController {
+
+    private final OrderService orderService;
+
+    @Autowired
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderResponse createOrder(@RequestBody OrderRequest orderRequest) {
+        return orderService.createOrder(orderRequest);
+    }
+
+    @GetMapping
+    public List<OrderResponse> getAllOrders() {
+        return orderService.getAllOrders();
+    }
+
+    @GetMapping("/{id}")
+    public OrderResponse getOrder(@PathVariable Long id) {
+        return orderService.getOrderById(id);
+    }
+}
+```
+
+src\main\java\com\example\product\dto\OrderRequest.java
+```
+package com.example.product.dto;
+
+import java.util.List;
+
+public class OrderRequest {
+    private Long userId;
+    private List<OrderItem> items;
+
+    public static class OrderItem {
+        private Long productId;
+        private int quantity;
+        private double price;
+
+        public OrderItem(Long productId, int quantity, double price) {
+            this.productId = productId;
+            this.quantity = quantity;
+            this.price = price;
+        }
+
+        public Long getProductId() {
+            return productId;
+        }
+
+        public void setProductId(Long productId) {
+            this.productId = productId;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        public double getPrice() {
+            return price;
+        }
+
+        public void setPrice(double price) {
+            this.price = price;
+        }
+    }
+
+    public OrderRequest(Long userId, List<OrderItem> items) {
+        this.userId = userId;
+        this.items = items;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+}
+```
+
+src\main\java\com\example\product\dto\OrderResponse.java
+```
+package com.example.product.dto;
+
+import com.example.product.model.OrderItem;
+import java.util.List;
+
+public class OrderResponse {
+    private Long id;
+    private Long userId;
+    private List<OrderItem> items;
+    private double total;
+
+    public OrderResponse(Long id, Long userId, List<OrderItem> items, double total) {
+        this.id = id;
+        this.userId = userId;
+        this.items = items;
+        this.total = total;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+}
+```
+
+src\main\java\com\example\product\model\Order.java
+```
+package com.example.product.model;
+
+import jakarta.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "orders")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long userId;
+    @ElementCollection
+    private List<OrderItem> items;
+    private double total;
+
+    public Order() {
+    }
+
+    public Order(Long id, Long userId, List<OrderItem> items, double total) {
+        this.id = id;
+        this.userId = userId;
+        this.items = items;
+        this.total = total;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+}
+```
+
+src\main\java\com\example\product\model\OrderItem.java
+```
+package com.example.product.model;
+
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public class OrderItem {
+    private Long productId;
+    private int quantity;
+    private double price;
+
+    public OrderItem(Long productId, int quantity, double price) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
+```
+
+src\main\java\com\example\product\repository\OrderRepository.java
+```
+package com.example.product.repository;
+
+import com.example.product.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface OrderRepository extends JpaRepository<Order, Long> {
+}
+```
+
+src\main\java\com\example\product\service\OrderService.java
+```
+package com.example.product.service;
+
+import com.example.product.dto.OrderRequest;
+import com.example.product.dto.OrderResponse;
+import com.example.product.model.Order;
+import com.example.product.model.OrderItem;
+import com.example.product.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+
+    @Autowired
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    public OrderResponse createOrder(OrderRequest orderRequest) {
+        Order order = new Order();
+        order.setUserId(orderRequest.getUserId());
+        order.setItems(convertToOrderItems(orderRequest.getItems()));
+        order.setTotal(calculateTotal(orderRequest.getItems()));
+
+        Order savedOrder = orderRepository.save(order);
+        return mapToOrderResponse(savedOrder);
+    }
+
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(this::mapToOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public OrderResponse getOrderById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        return mapToOrderResponse(order);
+    }
+
+    private List<OrderItem> convertToOrderItems(List<OrderRequest.OrderItem> requestItems) {
+        return requestItems.stream()
+                .map(item -> new OrderItem(item.getProductId(), item.getQuantity(), item.getPrice()))
+                .collect(Collectors.toList());
+    }
+
+    private double calculateTotal(List<OrderRequest.OrderItem> items) {
+        return items.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+
+    private OrderResponse mapToOrderResponse(Order order) {
+        return new OrderResponse(
+                order.getId(),
+                order.getUserId(),
+                order.getItems(),
+                order.getTotal()
+        );
+    }
+}
+```
+
+src\test\java\com\example\product\OrderServiceApplicationTests.java
+```
+package com.example.product;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class OrderServiceApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+
+```
+

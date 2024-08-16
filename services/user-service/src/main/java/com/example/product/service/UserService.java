@@ -24,7 +24,6 @@ public class UserService {
         User user = new User();
         user.setEmail(userRequest.getEmail());
         user.setPassword(userRequest.getPassword());
-        // 실제 애플리케이션에서는 비밀번호를 암호화해야 합니다.
 
         User savedUser = userRepository.save(user);
         return mapToUserResponse(savedUser);

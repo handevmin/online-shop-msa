@@ -7,8 +7,6 @@ public class ProductResponse {
     private String name;
     private BigDecimal price;
 
-    // Constructors, getters, and setters...
-
     public ProductResponse(Long id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;

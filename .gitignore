@@ -113,3 +113,7 @@ node_modules/
 
 # Kubernetes
 *.kubeconfig
+
+code_extractor_GUI.exe
+code_extractor.exe
+result.txt

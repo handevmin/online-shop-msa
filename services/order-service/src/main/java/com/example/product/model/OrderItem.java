@@ -8,6 +8,9 @@ public class OrderItem {
     private int quantity;
     private double price;
 
+    public OrderItem() {
+    }
+
     public OrderItem(Long productId, int quantity, double price) {
         this.productId = productId;
         this.quantity = quantity;

@@ -41,6 +41,20 @@ services:
     depends_on:
       - eureka-server
 
+  frontend:
+    build: ./services/frontend
+    ports:
+      - "80:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+      - REACT_APP_PRODUCT_SERVICE_URL=http://product-service:8081 
+      - REACT_APP_ORDER_SERVICE_URL=http://order-service:8082
+      - REACT_APP_USER_SERVICE_URL=http://user-service:8083 
+    depends_on:
+      - product-service
+      - order-service
+      - user-service
+
   jenkins:
     build: ./services/jenkins
     ports:
@@ -48,8 +62,6 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-    # environment:
-    #   - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
 
 volumes:
   jenkins_home:
