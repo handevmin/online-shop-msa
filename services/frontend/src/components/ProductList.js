@@ -8,7 +8,7 @@ const ProductList = ({ addToCart }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${PRODUCT_SERVICE_URL}/api/products`)
+    fetch('/api/products')
     .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

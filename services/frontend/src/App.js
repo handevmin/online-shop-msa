@@ -2,11 +2,6 @@ import React, { useState } from 'react';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import Order from './components/Order';
-import { API_URL } from './config';
-
-const PRODUCT_SERVICE_URL = process.env.REACT_APP_PRODUCT_SERVICE_URL;
-const ORDER_SERVICE_URL = process.env.REACT_APP_ORDER_SERVICE_URL;
-const USER_SERVICE_URL = process.env.REACT_APP_USER_SERVICE_URL;
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -20,7 +15,7 @@ function App() {
   };
 
   const createOrder = () => {
-    fetch(`${ORDER_SERVICE_URL}/api/orders`, {
+    fetch('/api/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,6 +26,9 @@ function App() {
       .then(data => {
         console.log('Order created:', data);
         setCart([]);
+      })
+      .catch(error => {
+        console.error('Error creating order:', error);
       });
   };
 
